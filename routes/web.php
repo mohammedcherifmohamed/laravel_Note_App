@@ -14,5 +14,14 @@ Route::post('/registerPost',[AuthController::class,'registerPost'])->name("regis
 
 Route::post('/loginPost',[AuthController::class,'loginPost'])->name("loginPost") ;
 
+Route::post('/logout',[AuthController::class,'logout'])->name("logout") ;
+
 Route::post('/AddNot',[NotesController::class,'AddNot'])->name("AddNot") ;
+
+Route::patch('/editPost/{id}',[NotesController::class,'editPost'])->name("editPost") ;
+
+Route::post('/edit',[NotesController::class,'edit'])->name("edit") ;
+
+
+
 

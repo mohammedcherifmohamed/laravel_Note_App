@@ -54,5 +54,13 @@ class AuthController extends Controller
 
     }
 
+    public function logout(Request $req){
+
+        Auth::logout();
+        $req->session()->invalidate();
+        $req->session()->regenerateToken();
+
+        return redirect()->route('login')->with('success',"yopu have Logged out successfully");
+    }
 
 }

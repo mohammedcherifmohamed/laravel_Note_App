@@ -21,18 +21,60 @@
                 <button id="theme-toggle" class="ml-4 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
                     <i class="fas fa-moon"></i>
                 </button>
-                <button id="logout-btn" class="ml-4 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-full">
+               <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                    @csrf
+                </form>
+
+                <button
+                    id="logout-btn"
+                    class="ml-4 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-full"
+                    onclick="document.getElementById('logout-form').submit();"
+                >
                     <i class="fas fa-sign-out-alt"></i> Logout
                 </button>
+
             </div>
         </header>
 
         <div class="mb-4">
             <input type="text" id="search-input" placeholder="Search notes..." class="w-full p-2 border rounded bg-gray-200 dark:bg-gray-700">
         </div>
+        @if(session()->has('error'))
+         <x-alert type="danger" >{{session('error')}}</x-alert>
+         @endif
+        @if(session()->has('success'))
+            <x-alert type="success">{{ session('success') }}</x-alert>
+        @endif
+
 
         <main id="notes-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             <!-- Notes will be dynamically inserted here -->
+            @foreach($notes as $note)
+            <div class="note p-4 rounded-lg shadow-md flex flex-col justify-between {{$note->color}} text-gray-800" draggable="true"  data-id="{{$note->id}}">
+                <div>
+                    <h3 class="font-bold text-lg">{{$note->title}}</h3>
+                    <p class="text-sm mt-2">{{$note->description}}.</p>
+                </div>
+                <div class="note-actions flex justify-end mt-4">
+                    <form action="edit" method="POST">
+                        @csrf
+                        <input name="note_id" type="number" hidden value="{{$note->id}}" >
+                       <button 
+                            class="edit-note-btn text-blue-500 hover:text-blue-700 mr-2"
+                            data-id="{{ $note->id }}"
+                            data-title="{{ $note->title }}"
+                            data-description="{{ $note->description }}"
+                            data-color="{{ $note->color }}"
+                        >
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </form>
+                    <button class="delete-note-btn text-red-500 hover:text-red-700" data-id="1">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+            @endforeach
         </main>
     </div>
 
@@ -41,26 +83,32 @@
         <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white dark:bg-gray-800">
             <div class="mt-3 text-center">
                 <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-gray-100" id="modal-title">Add Note</h3>
-                <form id="note-form" class="mt-2" method="POST" action="/AddNot" >
+                <form id="note-form" class="mt-2" method="POST" action="{{ route('AddNot') }}" >
                    @csrf
                     <input type="hidden" id="note-id">
-                    <input type="text" id="note-title" placeholder="Title" class="w-full p-2 border rounded mb-4 bg-gray-100 dark:bg-gray-700">
-                    <textarea id="note-description" placeholder="Description" rows="5" class="w-full p-2 border rounded mb-4 bg-gray-100 dark:bg-gray-700"></textarea>
+                    <input name="title" type="text" id="note-title" placeholder="Title" class="w-full p-2 border rounded mb-4 bg-gray-100 dark:bg-gray-700">
+                    @error('title')
+                        <p class="text-red" >{{$message}}</p>
+                     @enderror
+                    <textarea name="description" id="note-description" placeholder="Description" rows="5" class="w-full p-2 border rounded mb-4 bg-gray-100 dark:bg-gray-700"></textarea>
+                    @error('description')
+                        <p class="text-red" >{{$message}}</p>
+                    @enderror
                     <div class="flex justify-around mb-4">
                         <label class="flex items-center">
-                            <input type="radio" name="note-color" value="bg-yellow-200" class="form-radio h-5 w-5 text-yellow-300" checked>
+                            <input type="radio" name="note_color" value="bg-yellow-200" class="form-radio h-5 w-5 text-yellow-300" checked>
                             <span class="ml-2 rounded-full h-6 w-6 bg-yellow-200 block"></span>
                         </label>
                         <label class="flex items-center">
-                            <input type="radio" name="note-color" value="bg-blue-200" class="form-radio h-5 w-5 text-blue-300">
+                            <input type="radio" name="note_color" value="bg-blue-200" class="form-radio h-5 w-5 text-blue-300">
                             <span class="ml-2 rounded-full h-6 w-6 bg-blue-200 block"></span>
                         </label>
                         <label class="flex items-center">
-                            <input type="radio" name="note-color" value="bg-green-200" class="form-radio h-5 w-5 text-green-300">
+                            <input type="radio" name="note_color" value="bg-green-200" class="form-radio h-5 w-5 text-green-300">
                             <span class="ml-2 rounded-full h-6 w-6 bg-green-200 block"></span>
                         </label>
                         <label class="flex items-center">
-                            <input type="radio" name="note-color" value="bg-pink-200" class="form-radio h-5 w-5 text-pink-300">
+                            <input type="radio" name="note_color" value="bg-pink-200" class="form-radio h-5 w-5 text-pink-300">
                             <span class="ml-2 rounded-full h-6 w-6 bg-pink-200 block"></span>
                         </label>
                     </div>
