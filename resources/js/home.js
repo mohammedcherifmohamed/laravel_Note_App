@@ -54,18 +54,40 @@ searchinput.addEventListener('keyup', () => {
 });
 
 
+let draggedNote = null;
+
+document.querySelectorAll('.note').forEach(note => {
+    note.addEventListener('dragstart', (e) => {
+        draggedNote = note;
+        note.classList.add('opacity-50');
+    });
+
+    note.addEventListener('dragend', (e) => {
+        draggedNote = null;
+        note.classList.remove('opacity-50');
+    });
+
+    note.addEventListener('dragover', (e) => {
+        e.preventDefault(); 
+    });
+
+    note.addEventListener('drop', (e) => {
+        e.preventDefault();
+        if (draggedNote !== note) {
+            const parent = note.parentNode;
+            const notes = Array.from(parent.children);
+
+            const draggedIndex = notes.indexOf(draggedNote);
+            const targetIndex = notes.indexOf(note);
+
+            if (draggedIndex < targetIndex) {
+                parent.insertBefore(draggedNote, note.nextSibling);
+            } else {
+                parent.insertBefore(draggedNote, note);
+            }
+        }
+    });
+});
 
 
-    // document.querySelectorAll('.edit-note-btn').forEach(button => {
-    //     button.addEventListener('click', function (e) {
-    //         e.preventDefault(); 
-    //         const note = {
-    //             id: this.dataset.id,
-    //             title: this.dataset.title,
-    //             description: this.dataset.description,
-    //             color: this.dataset.color,
-    //         };
-    //         openModal('Edit Note', note);
-    //     });
-    // });
 });
