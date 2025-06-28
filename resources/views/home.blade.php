@@ -52,26 +52,26 @@
             @foreach($notes as $note)
             <div class="note p-4 rounded-lg shadow-md flex flex-col justify-between {{$note->color}} text-gray-800" draggable="true"  data-id="{{$note->id}}">
                 <div>
-                    <h3 class="font-bold text-lg">{{$note->title}}</h3>
-                    <p class="text-sm mt-2">{{$note->description}}.</p>
+                    <h3 id="note_title" class="note_title font-bold text-lg">{{$note->title}}</h3>
+                    <p class="note_description whitespace-pre-wrap text-sm mt-2">{{$note->description}}.</p>
                 </div>
                 <div class="note-actions flex justify-end mt-4">
-                    <form action="edit" method="POST">
+                    <form action="{{route('edit')}}" method="GET">
                         @csrf
-                        <input name="note_id" type="number" hidden value="{{$note->id}}" >
-                       <button 
-                            class="edit-note-btn text-blue-500 hover:text-blue-700 mr-2"
-                            data-id="{{ $note->id }}"
-                            data-title="{{ $note->title }}"
-                            data-description="{{ $note->description }}"
-                            data-color="{{ $note->color }}"
+                        <input name="note_id" type="hidden"  value="{{$note->id}}">
+                        <button type="submit"
+                            class="text-blue-500 hover:text-blue-700 mr-2"
                         >
                             <i class="fas fa-edit"></i>
                         </button>
                     </form>
-                    <button class="delete-note-btn text-red-500 hover:text-red-700" data-id="1">
-                        <i class="fas fa-trash"></i>
-                    </button>
+                    <form action="{{route('delete')}}" method="POST">
+                        @csrf
+                        <input name="note_id" type="hidden"  value="{{$note->id}}">
+                        <button  type='submit' class="delete-note-btn text-red-500 hover:text-red-700" data-id="1">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </form>
                 </div>
             </div>
             @endforeach
@@ -90,7 +90,9 @@
                     @error('title')
                         <p class="text-red" >{{$message}}</p>
                      @enderror
-                    <textarea name="description" id="note-description" placeholder="Description" rows="5" class="w-full p-2 border rounded mb-4 bg-gray-100 dark:bg-gray-700"></textarea>
+                    <textarea name="description" id="note-description" placeholder="Description" rows="5" class="whitespace-pre-wrap w-full p-2 border rounded mb-4 bg-gray-100 dark:bg-gray-700">
+
+                    </textarea>
                     @error('description')
                         <p class="text-red" >{{$message}}</p>
                     @enderror

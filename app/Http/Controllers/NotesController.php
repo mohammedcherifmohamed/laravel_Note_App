@@ -34,16 +34,57 @@ class NotesController extends Controller
         }
     }
 
-    public function editPost(Request $req){
+    public function editPost(Request $req , $id){
+    
+        $note = Notes::where('id',$req->note_id)
+                     ->where('user_id',Auth::id())
+                     ->first();
 
-        dd($req->id);
+        // dd($note );
+
+        $req->validate([
+            "title" => "required|min:3|max:255" ,
+            "description" => "required|min:3|max:255" ,
+        ]);
+
+        $res = $note->update([
+            'title' => $req->title , 
+            'description' => $req->description , 
+            'color' => $req->note_color , 
+        ]);
+
+
+
+        if($res)
+             return redirect()->route('home')->with('success', 'Note updated successfully!');
+        else
+         return redirect()->back();
+
+
         return  ;
 
     }
-    public function edit(Request $req){
 
-        dd($req->note_id);
-        return  ;
+    public function edit(Request $req){
+        $noteId = $req->note_id ;
+
+        $note = Notes::findOrFail($noteId);
+        return  view("EditNote",compact("note")) ;
+
+    }
+
+
+    public function delete(Request $req ){
+        $note = Notes::where('id',$req->note_id)
+                ->where('user_id',Auth::id())
+                ->first();
+         if (!$note) {
+        return redirect()->back()->with('error', 'Note not found or unauthorized.');
+     }
+
+    $note->delete();
+
+    return redirect()->back()->with('success', 'Note deleted successfully.');
 
     }
 }

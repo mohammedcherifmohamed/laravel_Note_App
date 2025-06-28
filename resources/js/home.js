@@ -7,8 +7,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const noteIdInput = document.getElementById('note-id');
     const noteTitleInput = document.getElementById('note-title');
     const noteDescriptionInput = document.getElementById('note-description');
+    const searchinput = document.getElementById('search-input');
+    const NotesContainer = document.getElementById('notes-grid');
 
     const openModal = (title, note = {}) => {
+        console.log("will Open ..")
         modalTitle.textContent = title;
         noteIdInput.value = note.id || '';
         noteTitleInput.value = note.title || '';
@@ -29,18 +32,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
     addNoteBtn.addEventListener('click', () => openModal('Add Note'));
     cancelBtn.addEventListener('click', closeModal);
+    console.log('JS loaded');
 
-    // 🔥 EDIT button logic
-    document.querySelectorAll('.edit-note-btn').forEach(button => {
-        button.addEventListener('click', function (e) {
-            e.preventDefault(); // Prevent form submission
-            const note = {
-                id: this.dataset.id,
-                title: this.dataset.title,
-                description: this.dataset.description,
-                color: this.dataset.color,
-            };
-            openModal('Edit Note', note);
-        });
+
+
+searchinput.addEventListener('keyup', () => {
+    console.log('hello');
+
+    const notes = document.querySelectorAll('.note');
+    const searchValue = searchinput.value.toLowerCase() ;
+    notes.forEach(note=>{
+        const title = note.querySelector('.note_title').textContent.toLowerCase();
+        const description = note.querySelector('.note_description').textContent.toLowerCase();
+
+        const matches = title.includes(searchValue) || description.includes(searchValue) ;
+        note.style.display = matches ? 'block' : 'none';
+
+
     });
+
+});
+
+
+
+
+    // document.querySelectorAll('.edit-note-btn').forEach(button => {
+    //     button.addEventListener('click', function (e) {
+    //         e.preventDefault(); 
+    //         const note = {
+    //             id: this.dataset.id,
+    //             title: this.dataset.title,
+    //             description: this.dataset.description,
+    //             color: this.dataset.color,
+    //         };
+    //         openModal('Edit Note', note);
+    //     });
+    // });
 });

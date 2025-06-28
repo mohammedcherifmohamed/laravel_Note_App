@@ -20,8 +20,10 @@ Route::post('/AddNot',[NotesController::class,'AddNot'])->name("AddNot") ;
 
 Route::patch('/editPost/{id}',[NotesController::class,'editPost'])->name("editPost") ;
 
-Route::post('/edit',[NotesController::class,'edit'])->name("edit") ;
+Route::get('/edit',[NotesController::class,'edit'])->name("edit") ;
 
+Route::post('/edit/{id}',[NotesController::class,'editPost'])->name("editPost") ;
 
+Route::post('/delete',[NotesController::class,'delete'])->name("delete") ;
 
 
